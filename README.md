@@ -1,34 +1,80 @@
-# Sales-Performance
-End-to-end BI project: SQL Server star schema → Power BI dashboard,
-built on Superstore sales data.
+# Sales Performance Dashboard
 
-## Star Schema
-![Star Schema](Star%20Schema.png)
+An end-to-end Business Intelligence project built on **Superstore Sales** data, using **SQL Server** and **Power BI** to design a dimensional data warehouse and deliver an interactive sales analytics dashboard.
 
-FactSales connects to 5 dimensions (DimDate, DimCustomer, DimProduct, 
-DimTerritory, DimOrder). DimDate is a single-column role-playing 
-dimension built via UNION of Order_Date, Ship_Date, and Date_Entry, 
-so all date filtering routes through one table.
+---
 
-## Dashboard
+## 📊 Dashboard Preview
+
 ![Dashboard](Dashboard.png)
 
-## Data quality issues found and fixed
-- **$353K reconciliation gap**: dashboard totals didn't match the 
-  Region breakdown. Root cause: blank (empty string) Region values 
-  weren't caught by a NULL check in the fallback logic — fixed with 
-  NULLIF to catch both NULL and blank. [screenshot before/after optional]
-- **Ambiguous model relationship**: FactSales and DimOrder shared 
-  both Order_ID and Order_Date, creating two possible join paths. 
-  Resolved by dropping Order_Date from DimOrder, leaving Order_ID 
-  as the single relationship key.
-- **YoY Growth measure returning a misleading number**: with no 
-  year filter applied, the measure was comparing 4 years of pooled 
-  sales against 3 years (a SAMEPERIODLASTYEAR artifact with no 2022 
-  data to shift into). Fixed with a HASONEVALUE guard so the measure 
-  only calculates against a single selected year.
+---
 
-## Known limitation
-2026 data is partial (through ~July/August), so YoY comparisons 
-against 2026 understate performance rather than reflecting a real 
-decline.
+## 🗄️ Star Schema
+
+![Star Schema](Star%20Schema.png)
+
+---
+
+## 📐 Architecture
+
+The data warehouse follows a **star schema** consisting of one fact table and five dimensions.
+
+| Object | Type | Description |
+|--------|------|-------------|
+| `FactSales` | Fact Table | Stores sales transactions and measures |
+| `DimDate` | Dimension | Role-playing date dimension built from `Order_Date`, `Ship_Date`, and `Date_Entry` |
+| `DimCustomer` | Dimension | Customer information |
+| `DimProduct` | Dimension | Product details |
+| `DimTerritory` | Dimension | Regional sales hierarchy |
+| `DimOrder` | Dimension | Order-level attributes linked by `Order_ID` |
+
+`DimDate` is implemented as a **single-column role-playing dimension** using a `UNION` of **Order_Date**, **Ship_Date**, and **Date_Entry**, allowing all date filtering to be handled through one centralized date table.
+
+---
+
+## 🔍 Data Quality & Modeling Challenges
+
+### **$353K Sales Reconciliation Gap**
+
+**Problem**
+
+Dashboard totals did not match the regional sales breakdown.
+
+**Root Cause**
+
+Blank (`''`) Region values were not captured by the existing `NULL` check, causing the fallback logic to fail.
+
+**Solution**
+
+Applied `NULLIF()` so both blank strings and `NULL` values are handled consistently.
+
+---
+
+### **Ambiguous Model Relationship**
+
+**Problem**
+
+`FactSales` and `DimOrder` were related through both `Order_ID` and `Order_Date`, creating multiple filter paths.
+
+**Solution**
+
+Removed `Order_Date` from `DimOrder`, leaving `Order_ID` as the single relationship key.
+
+---
+
+### **Year-over-Year Growth Measure**
+
+**Problem**
+
+Without a year filter, the YoY measure compared four years of pooled sales against three years of prior-period data due to `SAMEPERIODLASTYEAR()`.
+
+**Solution**
+
+Added a `HASONEVALUE()` guard so YoY calculations only execute when a single year is selected.
+
+---
+
+## ⚠️ Known Limitation
+
+The dataset contains only partial data for **2026** (through approximately July/August). As a result, Year-over-Year comparisons for 2026 understate performance because the year is incomplete rather than reflecting a true decline.
