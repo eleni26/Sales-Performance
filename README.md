@@ -11,7 +11,7 @@ dimension built via UNION of Order_Date, Ship_Date, and Date_Entry,
 so all date filtering routes through one table.
 
 ## Dashboard
-![Dashboard](Dashboard.png)
+![Dashboard](Dashboard.PNG)
 
 ## Data quality issues found and fixed
 - **$353K reconciliation gap**: dashboard totals didn't match the 
