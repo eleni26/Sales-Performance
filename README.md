@@ -3,7 +3,7 @@ End-to-end BI project: SQL Server star schema → Power BI dashboard,
 built on Superstore sales data.
 
 ## Star Schema
-![Star Schema](star-schema.png)
+![Star Schema](Star%20Schema.png)
 
 FactSales connects to 5 dimensions (DimDate, DimCustomer, DimProduct, 
 DimTerritory, DimOrder). DimDate is a single-column role-playing 
@@ -11,7 +11,7 @@ dimension built via UNION of Order_Date, Ship_Date, and Date_Entry,
 so all date filtering routes through one table.
 
 ## Dashboard
-![Dashboard](sales-performance-dashboard.png)
+![Dashboard](Sales%20Performance%20dashboard.png)
 
 ## Data quality issues found and fixed
 - **$353K reconciliation gap**: dashboard totals didn't match the 
