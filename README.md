@@ -4,6 +4,18 @@ An end-to-end Business Intelligence project built on **Superstore Sales** data, 
 
 ---
 
+## 🎯 Business Question
+
+Where do sales come from, by region, category and customer segment, and how is performance trending year over year? The source data is deliberately messy, so the first question is whether it can be trusted at all.
+
+---
+
+## 🔍 Key Findings
+
+- **Sales are concentrated in the West, not evenly spread.** When region is derived from State, the West accounts for about 39% of sales, and California alone for about 26%. South follows at about 25%, and East, Central and North are about 11–12% each.
+- **The source data's own Region field is unreliable.** Every state appears under every region label in roughly equal numbers, so any analysis based on that field shows a false "evenly balanced" picture (see Known Limitations).
+---
+
 ## 📊 Dashboard Preview
 
 ![Dashboard](Dashboard.png)
@@ -34,6 +46,32 @@ The data warehouse follows a **star schema** consisting of one fact table and fi
 ---
 
 ## 🔍 Data Quality & Modeling Challenges
+
+### Data cleaning summary
+
+The raw extract has 16,000 rows. Issues found and handled in `Table script.sql`:
+
+| Issue | Rows affected | Fix |
+|-------|---------------|-----|
+| Misspelled or non-standard categories (e.g. `Furnitree`, `Offis Suply`, `Phonesss`) | 1,787 | Mapped to Furniture / Office Supplies / Technology |
+| Inconsistent sub-category casing and spacing | 28 variants → 14 | `TRIM` + proper case |
+| Placeholder phone numbers (`phone_number_hidden`, `000-000-0000`, …) | 803 | Set to `NULL` |
+| Invalid product IDs | 312 | Grouped as `UNKNOWN_PROD` |
+| Invalid postal codes (`NULL_ZIP`, `ABCDE`, `0`) | 477 | Grouped as `UNKNOWN_ZIP` |
+| Unparseable or out-of-range dates (e.g. year 1900 / 2099) | 31 | `TRY_CAST`; excluded from the date dimension |
+| Region labelled `UNKNOWN_SYSTEM_VAL` | 2,394 | Region re-derived from State |
+
+### **Unreliable Source Region Field**
+
+**Problem**
+
+Cross-tabulating State against the source `Region` column showed that every state is spread almost evenly across all five region labels. For example, California rows are labelled East, North, South and West in nearly equal numbers, and Chicago, Illinois appears as "West."
+
+**Solution**
+
+Region is derived from State in `DimTerritory` instead of trusting the source field. This changes the conclusion: sales are concentrated in the West (~39%) rather than evenly balanced.
+
+---
 
 ### **$353K Sales Reconciliation Gap**
 
@@ -75,6 +113,7 @@ Added a `HASONEVALUE()` guard so YoY calculations only execute when a single yea
 
 ---
 
-## ⚠️ Known Limitation
+## ⚠️ Known Limitations
 
-The dataset contains only partial data for **2026** (through approximately July/August). As a result, Year-over-Year comparisons for 2026 understate performance because the year is incomplete rather than reflecting a true decline.
+- **Dashboard region chart:** the "Region Portion of Sales" donut and the "Regions are evenly balanced" insight in the screenshot are based on the unreliable source Region field. The chart is being switched to the State-derived region from `DimTerritory`, which shows sales concentrated in the West.
+- **Partial final year:** the dataset contains only partial data for **2026** (through approximately July/August). As a result, Year-over-Year comparisons for 2026 understate performance because the year is incomplete rather than reflecting a true decline.
