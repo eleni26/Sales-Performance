@@ -2,10 +2,7 @@
 
 An end-to-end Business Intelligence project on deliberately messy Superstore-style sales data. I cleaned and modeled the data in **SQL Server** and built a two-page interactive **Power BI** report on top of it.
 
-**[▶ Open the live interactive dashboard](https://app.powerbi.com/view?r=eyJrIjoiMDFhODc4NTItYjhmYy00Y2MyLTgzZjctM2EzNjBlZGE1MGIzIiwidCI6ImY1MmYyMTgzLTlmNjctNGFkMi1iNjU2LTZmNzU0ZmUxOTZjYiIsImMiOjZ9)**: use the year slicer and click the charts to filter the report.
-
----
-
+**[▶ Open the live interactive dashboard](https://app.powerbi.com/view?r=eyJrIjoiMDFhODc4NTItYjhmYy00Y2MyLTgzZjctM2EzNjBlZGE1MGIzIiwidCI6ImY1MmYyMTgzLTlmNjctNGFkMi1iNjU2LTZmNzU0ZmUxOTZjYiIsImMiOjZ9&pageName=b06f71cf8e2f1591a186)**: use the year slicer and click the charts to filter the report.
 ## 🎯 Business Question
 
 Where do sales and profit come from, by month, city and region, and is the business growing year over year? The source data is deliberately messy, so the first question is whether it can be trusted at all.
